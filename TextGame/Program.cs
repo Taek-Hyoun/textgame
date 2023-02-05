@@ -70,7 +70,7 @@ namespace TextGame
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+                //{2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
             };
 
@@ -102,7 +102,7 @@ namespace TextGame
             System.Timers.Timer aTimer = new System.Timers.Timer();
 
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 3000;
+            aTimer.Interval = 1000;
             aTimer.Start();
             Console.ReadLine();
         }
@@ -121,8 +121,12 @@ namespace TextGame
             }
         }
         public static int fps = 0;
+        public static int currentLine;
+        public static ConsoleKey c;
+
         public static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
+
             //플레이 그라운드 초기화 클래스.
             Initialize init = new Initialize();
             init.InitializePlayGround(playGround);
@@ -131,6 +135,18 @@ namespace TextGame
                 SetRandom();
             }
             MoveDown(fps++);
+
+            c = Console.ReadKey();   // 입력한 키를 받음
+            switch (c.Key)
+            {
+                case ConsoleKey.RightArrow:
+                    //오른쪽 움직임 메서드
+                    break;
+                case ConsoleKey.LeftArrow:
+                    //왼쪽 움직임 메서드
+                    break;
+            }
+
             Console.SetCursorPosition(0, 0);
         }
         //텍스트들을 아래로 움직인다
@@ -147,6 +163,7 @@ namespace TextGame
                         playGround[i, j] = "  ";
                         //이전텍스들의 y를 하나 올림
                         playGround[i + 1, j] = temp;
+                        currentLine = i + 1;
                     }
                 }
             }
@@ -154,6 +171,10 @@ namespace TextGame
         //텍스트들이 마지막 라인인지 확인하는 메서드
         public static bool IsEndLine()
         {
+            if(currentLine == 10)
+            {
+                Environment.Exit(0);
+            }
             return false;
         }
     }
