@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 
-
 namespace TextGame
 {
     class RandomPlace
@@ -39,6 +38,10 @@ namespace TextGame
                     {
                         playGround[i, j] = "□";
                     }
+                    else if (playGround[i, j] == "3")
+                    {
+                        playGround[i, j] = "♨";
+                    }
                     Console.Write(playGround[i, j]);
                 }
                 Console.Write("\n");
@@ -70,7 +73,7 @@ namespace TextGame
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2},
-                //{2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+                {2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
             };
 
@@ -92,18 +95,19 @@ namespace TextGame
 
         public static string[] arrText = new string[] {"", "a ", "b ", "c ", "d ", "e ", "f ", "g ", "h ", "i ", "j ", "k ", "l ", "m ", "n ", "o ", "p ",
                                              "q ", "r ", "s ", "t ", "u ", "v ", "w ", "x ", "y ", "z "};
-
+        
         static void Main(string[] args)
         {
             IntToString();
-
             SetRandom();
+            
             //플레이 그라운드에서의 텍스트 랜덤 위치를 뽑아내는 클래스.
             System.Timers.Timer aTimer = new System.Timers.Timer();
 
             aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
             aTimer.Interval = 1000;
             aTimer.Start();
+            
             Console.ReadLine();
         }
         public int[] previusArr = new int[3];
@@ -122,7 +126,6 @@ namespace TextGame
         }
         public static int fps = 0;
         public static int currentLine;
-        public static ConsoleKey c;
 
         public static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
@@ -130,24 +133,14 @@ namespace TextGame
             //플레이 그라운드 초기화 클래스.
             Initialize init = new Initialize();
             init.InitializePlayGround(playGround);
+
             //텍스트들이 마지막 라인에 도달했을 때 랜덤메서드 실행
             if (IsEndLine()) {
                 SetRandom();
             }
             MoveDown(fps++);
-
-            c = Console.ReadKey();   // 입력한 키를 받음
-            switch (c.Key)
-            {
-                case ConsoleKey.RightArrow:
-                    //오른쪽 움직임 메서드
-                    break;
-                case ConsoleKey.LeftArrow:
-                    //왼쪽 움직임 메서드
-                    break;
-            }
-
             Console.SetCursorPosition(0, 0);
+
         }
         //텍스트들을 아래로 움직인다
         public static void MoveDown(int HowLong)
@@ -167,6 +160,25 @@ namespace TextGame
                     }
                 }
             }
+        }
+        //온천 아이콘을 오른쪽으로 움직인다
+        public static void MoveRight()
+        {
+            for(int i = 1; i < playGround.GetLength(1)-2; i++)
+            {
+                if(playGround[playGround.GetLength(0) - 2, i] == "♨")
+                {
+                    string temp = playGround[playGround.GetLength(0) - 2, i];
+                    playGround[playGround.GetLength(0) - 2, i] = "  ";
+                    playGround[playGround.GetLength(0) - 2, i + 1] = temp;
+                }
+            }
+            
+        }
+        //온천 아이콘을 왼쪽으로 움직인다
+        public static void MoveLeft()
+        {
+
         }
         //텍스트들이 마지막 라인인지 확인하는 메서드
         public static bool IsEndLine()
