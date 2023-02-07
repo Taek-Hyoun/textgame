@@ -95,26 +95,12 @@ namespace TextGame
 
         public static string[] arrText = new string[] {"", "a ", "b ", "c ", "d ", "e ", "f ", "g ", "h ", "i ", "j ", "k ", "l ", "m ", "n ", "o ", "p ",
                                              "q ", "r ", "s ", "t ", "u ", "v ", "w ", "x ", "y ", "z "};
-        
-        static void Main(string[] args)
-        {
-            IntToString();
-            SetRandom();
-            
-            //플레이 그라운드에서의 텍스트 랜덤 위치를 뽑아내는 클래스.
-            System.Timers.Timer aTimer = new System.Timers.Timer();
 
-            aTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
-            aTimer.Interval = 1000;
-            aTimer.Start();
-            
-            Console.ReadLine();
-        }
         public int[] previusArr = new int[3];
         public static void SetRandom()
         {
             RandomPlace rp = new RandomPlace();
-            int[] arr = rp.Randomer(1, playGround.GetLength(1)-1);
+            int[] arr = rp.Randomer(1, playGround.GetLength(1) - 1);
 
             for (int i = 1; i <= 1; i++)
             {
@@ -124,28 +110,29 @@ namespace TextGame
                 }
             }
         }
+
         public static int fps = 0;
         public static int currentLine;
-
-        public static void OnTimedEvent(Object source, ElapsedEventArgs e)
+        public static void OnTimedEvent()
         {
 
-            //플레이 그라운드 초기화 클래스.
-            Initialize init = new Initialize();
-            init.InitializePlayGround(playGround);
+            while (true)
+            {
+                //플레이 그라운드 초기화 클래스.
+                Initialize init = new Initialize();
+                init.InitializePlayGround(playGround);
 
-            //텍스트들이 마지막 라인에 도달했을 때 랜덤메서드 실행
-            if (IsEndLine()) {
-                SetRandom();
+
+                Console.SetCursorPosition(0, 0);
+                Console.CursorVisible = false;
             }
-            MoveDown(fps++);
-            Console.SetCursorPosition(0, 0);
-
         }
+
+        
         //텍스트들을 아래로 움직인다
-        public static void MoveDown(int HowLong)
+        public static void MoveDown()
         {
-            for(int i = 1; i <= HowLong; i++)
+            for (int i = 1; i <= 10; i++)
             {
                 for (int j = 1; j < 28; j++)
                 {
@@ -159,35 +146,82 @@ namespace TextGame
                         currentLine = i + 1;
                     }
                 }
+                Thread.Sleep(1000);
             }
         }
         //온천 아이콘을 오른쪽으로 움직인다
         public static void MoveRight()
         {
-            for(int i = 1; i < playGround.GetLength(1)-2; i++)
+            
+            for (int i = 1; i < playGround.GetLength(1) - 2; i++)
             {
-                if(playGround[playGround.GetLength(0) - 2, i] == "♨")
+                if (playGround[playGround.GetLength(0) - 2, i] == "♨")
                 {
                     string temp = playGround[playGround.GetLength(0) - 2, i];
                     playGround[playGround.GetLength(0) - 2, i] = "  ";
                     playGround[playGround.GetLength(0) - 2, i + 1] = temp;
+                    break;
                 }
             }
-            
         }
         //온천 아이콘을 왼쪽으로 움직인다
         public static void MoveLeft()
         {
-
+            for (int i = 1; i < playGround.GetLength(1) - 2; i++)
+            {
+                if (playGround[playGround.GetLength(0) - 2, i] == "♨")
+                {
+                    string temp = playGround[playGround.GetLength(0) - 2, i];
+                    playGround[playGround.GetLength(0) - 2, i] = "  ";
+                    playGround[playGround.GetLength(0) - 2, i - 1] = temp;
+                    break;
+                }
+            }
         }
+
+        public static ConsoleKeyInfo c;
+        public static void Input()
+        {
+            while (true)
+            {
+                c = Console.ReadKey();
+                if(c.Key == ConsoleKey.RightArrow)
+                {
+                    MoveRight();
+                }
+                else if(c.Key == ConsoleKey.LeftArrow)
+                {
+                    MoveLeft();
+                }
+            }
+        }
+
         //텍스트들이 마지막 라인인지 확인하는 메서드
         public static bool IsEndLine()
         {
-            if(currentLine == 10)
+            if (currentLine == 10)
             {
                 Environment.Exit(0);
             }
             return false;
+        }
+
+        static void Main(string[] args)
+        {
+            IntToString();
+            SetRandom();
+
+            //플레이 그라운드에서의 텍스트 랜덤 위치를 뽑아내는 클래스.
+            Task workPlayGround = new Task(new Action(OnTimedEvent));
+            Task workInput = new Task(new Action(Input));
+            Task workMoveDown = new Task(new Action(MoveDown));
+
+            workPlayGround.Start();
+            workMoveDown.Start();
+            workInput.Start();
+            workInput.Wait();
+            workMoveDown.Wait();
+            workPlayGround.Wait();
         }
     }
 }
