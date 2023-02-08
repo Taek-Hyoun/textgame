@@ -10,15 +10,10 @@ namespace TextGame
 {
     class RandomPlace
     {
-        public int[] numOfRand = new int[3];
-        public int[] Randomer(int min, int max)
+        public int Randomer(int min, int max)
         {
             Random rd = new Random();
-            for (int i = 0; i < 3; i++)
-            {
-                this.numOfRand[i] = rd.Next(min, max);
-            }
-            return this.numOfRand;
+            return rd.Next(min, max);
         }
     }
 
@@ -72,7 +67,7 @@ namespace TextGame
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2},
+                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
                 {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
             };
@@ -100,28 +95,20 @@ namespace TextGame
         public static void SetRandom()
         {
             RandomPlace rp = new RandomPlace();
-            int[] arr = rp.Randomer(1, playGround.GetLength(1) - 1);
-
-            for (int i = 1; i <= 1; i++)
-            {
-                for (int j = 0; j < arr.Length; j++)
-                {
-                    playGround[i, arr[j]] = arrText[arr[j]];
-                }
-            }
+            int arr = rp.Randomer(1, playGround.GetLength(1) - 1);
+            
+            playGround[1, arr] = arrText[arr];
         }
 
         public static int fps = 0;
         public static int currentLine;
         public static void OnTimedEvent()
         {
-
-            while (true)
-            {
+            while (true) {
+                
                 //플레이 그라운드 초기화 클래스.
                 Initialize init = new Initialize();
                 init.InitializePlayGround(playGround);
-
 
                 Console.SetCursorPosition(0, 0);
                 Console.CursorVisible = false;
@@ -132,9 +119,10 @@ namespace TextGame
         //텍스트들을 아래로 움직인다
         public static void MoveDown()
         {
-            for (int i = 1; i <= 10; i++)
+            int until = 1;
+            for (int i = 1; i <= until; i++)
             {
-                for (int j = 1; j < 28; j++)
+                for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                 {
                     if (playGround[i, j] != "□" && playGround[i, j] != "  ")
                     {
@@ -146,13 +134,22 @@ namespace TextGame
                         currentLine = i + 1;
                     }
                 }
-                Thread.Sleep(1000);
+                if(until == i)
+                {
+                    Console.Beep();
+                    i = 1;
+                    until++;
+                    SetRandom();
+                    Thread.Sleep(1000);
+                }
+                
+                
             }
         }
         //온천 아이콘을 오른쪽으로 움직인다
         public static void MoveRight()
         {
-            
+            //객체지향적으로 코드 바꾸기-------------------------------------------------------------------
             for (int i = 1; i < playGround.GetLength(1) - 2; i++)
             {
                 if (playGround[playGround.GetLength(0) - 2, i] == "♨")
@@ -167,6 +164,7 @@ namespace TextGame
         //온천 아이콘을 왼쪽으로 움직인다
         public static void MoveLeft()
         {
+            //객체지향적으로 코드 바꾸기-------------------------------------------------------------------
             for (int i = 1; i < playGround.GetLength(1) - 2; i++)
             {
                 if (playGround[playGround.GetLength(0) - 2, i] == "♨")
@@ -184,7 +182,7 @@ namespace TextGame
         {
             while (true)
             {
-                c = Console.ReadKey();
+                c = Console.ReadKey(true);
                 if(c.Key == ConsoleKey.RightArrow)
                 {
                     MoveRight();
@@ -211,6 +209,7 @@ namespace TextGame
             IntToString();
             SetRandom();
 
+
             //플레이 그라운드에서의 텍스트 랜덤 위치를 뽑아내는 클래스.
             Task workPlayGround = new Task(new Action(OnTimedEvent));
             Task workInput = new Task(new Action(Input));
@@ -218,8 +217,10 @@ namespace TextGame
 
             workPlayGround.Start();
             workMoveDown.Start();
+
             workInput.Start();
             workInput.Wait();
+
             workMoveDown.Wait();
             workPlayGround.Wait();
         }
