@@ -119,8 +119,9 @@ namespace TextGame
         //텍스트들을 아래로 움직인다
         public static void MoveDown()
         {
+            int i = 1;
             int until = 1;
-            for (int i = 1; i <= until; i++)
+            while(i <= until)
             {
                 for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                 {
@@ -131,19 +132,19 @@ namespace TextGame
                         playGround[i, j] = "  ";
                         //이전텍스들의 y를 하나 올림
                         playGround[i + 1, j] = temp;
-                        currentLine = i + 1;
                     }
                 }
                 if(until == i)
                 {
                     Console.Beep();
                     i = 1;
-                    until++;
+                    until += 1;
                     SetRandom();
                     Thread.Sleep(1000);
+                    continue;
                 }
-                
-                
+                i++;
+                Thread.Sleep(1000);
             }
         }
         //온천 아이콘을 오른쪽으로 움직인다
