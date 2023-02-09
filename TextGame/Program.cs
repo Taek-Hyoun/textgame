@@ -119,33 +119,26 @@ namespace TextGame
         //텍스트들을 아래로 움직인다
         public static void MoveDown()
         {
-            int i = 1;
-            int until = 1;
-            while(i <= until)
+            while(true)
             {
-                for (int j = 1; j < playGround.GetLength(1) - 2; j++)
+                for(int i = playGround.GetLength(0) - 3; i >= 1; i--)
                 {
-                    if (playGround[i, j] != "□" && playGround[i, j] != "  ")
+                    for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                     {
-                        //이전 텍스트들을 없앰
-                        string temp = playGround[i, j];
-                        playGround[i, j] = "  ";
-                        //이전텍스들의 y를 하나 올림
-                        playGround[i + 1, j] = temp;
+                        if (playGround[i, j] != "□" && playGround[i, j] != "  ")
+                        {
+                            //이전 텍스트들을 없앰
+                            string temp = playGround[i, j];
+                            playGround[i, j] = "  ";
+                            //이전텍스들의 y를 하나 올림
+                            playGround[i + 1, j] = temp;
+                            Thread.Sleep(100);
+                        }
                     }
                 }
-                if(until == i)
-                {
-                    Console.Beep();
-                    i = 1;
-                    until += 1;
-                    SetRandom();
-                    Thread.Sleep(1000);
-                    continue;
-                }
-                i++;
-                Thread.Sleep(1000);
+                SetRandom();
             }
+            //위에서부터 아래가 아닌 아래에서부터 위로 올라가는 방식으로.,
         }
         //온천 아이콘을 오른쪽으로 움직인다
         public static void MoveRight()
