@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
+using System.Diagnostics;
 
 namespace TextGame
 {
@@ -123,6 +125,20 @@ namespace TextGame
             {
                 for(int i = playGround.GetLength(0) - 3; i >= 1; i--)
                 {
+                    if(i + 1 == playGround.GetLength(0) - 2)
+                    {
+                        for (int j = 1; j < playGround.GetLength(1) - 2; j++)
+                        {
+                            Match m = Regex.Match(playGround[playGround.GetLength(0) - 2, j], "[a-z]");
+                            if (m.Success)
+                            {
+                                Debug.WriteLine(m.Success);
+                                playGround[playGround.GetLength(0) - 2, j] = "  ";
+                            }
+                        }
+                    }
+
+
                     for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                     {
                         if (playGround[i, j] != "□" && playGround[i, j] != "  ")
@@ -132,7 +148,7 @@ namespace TextGame
                             playGround[i, j] = "  ";
                             //이전텍스들의 y를 하나 올림
                             playGround[i + 1, j] = temp;
-                            Thread.Sleep(100);
+                            Thread.Sleep(1);
                         }
                     }
                 }
@@ -186,16 +202,6 @@ namespace TextGame
                     MoveLeft();
                 }
             }
-        }
-
-        //텍스트들이 마지막 라인인지 확인하는 메서드
-        public static bool IsEndLine()
-        {
-            if (currentLine == 10)
-            {
-                Environment.Exit(0);
-            }
-            return false;
         }
 
         static void Main(string[] args)
