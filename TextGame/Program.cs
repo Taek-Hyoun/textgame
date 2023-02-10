@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TextGame
 {
@@ -35,44 +36,63 @@ namespace TextGame
                     {
                         playGround[i, j] = "□";
                     }
-                    else if (playGround[i, j] == "3")
-                    {
-                        playGround[i, j] = "♨";
-                    }
                     Console.Write(playGround[i, j]);
                 }
                 Console.Write("\n");
             }
         }
     }
+    class Character
+    {
+        Program pg = new Program();
+        public int x = 14;
+        public int y = 20;
 
+        public void MoveRight(string[,] playGround)
+        {
+            string temp = playGround[y, x];
+            playGround[y, x] = "  ";
+            playGround[y, x + 1] = temp;
+            x++;
+        }
+        public void MoveLeft(string[,] playGround)
+        {
+            if (x >= 1)
+            {
+                string temp = playGround[y, x];
+                playGround[y, x] = "  ";
+                playGround[y, x - 1] = temp;
+                x--;
+            }
+        }
+    }
     class Program
     {
         public static int[,] intArr = new int[,]
-            {
-                {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
-                {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-            };
+        {
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+            {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+        };
 
         public static int row = 22;
         public static int column = 28;
@@ -101,9 +121,15 @@ namespace TextGame
             
             playGround[1, arr] = arrText[arr];
         }
+        
+        public static void SetCharacter()
+        {
+            Character cht = new Character();
+            playGround[cht.y, cht.x] = "♨";
+        }
+
 
         public static int fps = 0;
-        public static int currentLine;
         public static void OnTimedEvent()
         {
             while (true) {
@@ -129,6 +155,7 @@ namespace TextGame
                     {
                         for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                         {
+                            //regex
                             Match m = Regex.Match(playGround[playGround.GetLength(0) - 2, j], "[a-z]");
                             if (m.Success)
                             {
@@ -156,36 +183,8 @@ namespace TextGame
             }
             //위에서부터 아래가 아닌 아래에서부터 위로 올라가는 방식으로.,
         }
-        //온천 아이콘을 오른쪽으로 움직인다
-        public static void MoveRight()
-        {
-            //객체지향적으로 코드 바꾸기-------------------------------------------------------------------
-            for (int i = 1; i < playGround.GetLength(1) - 2; i++)
-            {
-                if (playGround[playGround.GetLength(0) - 2, i] == "♨")
-                {
-                    string temp = playGround[playGround.GetLength(0) - 2, i];
-                    playGround[playGround.GetLength(0) - 2, i] = "  ";
-                    playGround[playGround.GetLength(0) - 2, i + 1] = temp;
-                    break;
-                }
-            }
-        }
-        //온천 아이콘을 왼쪽으로 움직인다
-        public static void MoveLeft()
-        {
-            //객체지향적으로 코드 바꾸기-------------------------------------------------------------------
-            for (int i = 1; i < playGround.GetLength(1) - 2; i++)
-            {
-                if (playGround[playGround.GetLength(0) - 2, i] == "♨")
-                {
-                    string temp = playGround[playGround.GetLength(0) - 2, i];
-                    playGround[playGround.GetLength(0) - 2, i] = "  ";
-                    playGround[playGround.GetLength(0) - 2, i - 1] = temp;
-                    break;
-                }
-            }
-        }
+
+        public static Character cht = new Character();
 
         public static ConsoleKeyInfo c;
         public static void Input()
@@ -195,11 +194,11 @@ namespace TextGame
                 c = Console.ReadKey(true);
                 if(c.Key == ConsoleKey.RightArrow)
                 {
-                    MoveRight();
+                    cht.MoveRight(playGround);
                 }
                 else if(c.Key == ConsoleKey.LeftArrow)
                 {
-                    MoveLeft();
+                    cht.MoveLeft(playGround);
                 }
             }
         }
@@ -208,7 +207,7 @@ namespace TextGame
         {
             IntToString();
             SetRandom();
-
+            SetCharacter();
 
             //플레이 그라운드에서의 텍스트 랜덤 위치를 뽑아내는 클래스.
             Task workPlayGround = new Task(new Action(OnTimedEvent));
