@@ -50,14 +50,17 @@ namespace TextGame
 
         public void MoveRight(string[,] playGround)
         {
-            string temp = playGround[y, x];
-            playGround[y, x] = "  ";
-            playGround[y, x + 1] = temp;
-            x++;
+            if (playGround.GetLength(1) - 2 > x)
+            {
+                string temp = playGround[y, x];
+                playGround[y, x] = "  ";
+                playGround[y, x + 1] = temp;
+                x++;
+            }
         }
         public void MoveLeft(string[,] playGround)
         {
-            if (x >= 1)
+            if (x > 1)
             {
                 string temp = playGround[y, x];
                 playGround[y, x] = "  ";
@@ -147,20 +150,32 @@ namespace TextGame
         //텍스트들을 아래로 움직인다
         public static void MoveDown()
         {
+            Character cht = new Character();
+            int lastLine = playGround.GetLength(0) - 2;
+
             while(true)
             {
                 for(int i = playGround.GetLength(0) - 3; i >= 1; i--)
                 {
-                    if(i + 1 == playGround.GetLength(0) - 2)
+                    if(i + 1 == lastLine)
                     {
                         for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                         {
                             //regex
-                            Match m = Regex.Match(playGround[playGround.GetLength(0) - 2, j], "[a-z]");
+                            Match m = Regex.Match(playGround[lastLine, j], "[a-z]");
                             if (m.Success)
                             {
-                                Debug.WriteLine(m.Success);
+                                Debug.WriteLine($"lastLine : {lastLine} cht.y : {cht.y} j : {j} cht.x : {cht.x}");
+                                if(lastLine == cht.y && j == cht.x)
+                                {
+                                    //gameEnd();
+                                    Console.Beep();
+                                    playGround[playGround.GetLength(0) - 2, j] = "  ";
+                                    Debug.WriteLine("GameEnd!");
+                                    break;
+                                }
                                 playGround[playGround.GetLength(0) - 2, j] = "  ";
+                                
                             }
                         }
                     }
