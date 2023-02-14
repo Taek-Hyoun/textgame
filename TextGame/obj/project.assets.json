@@ -8,24 +8,26 @@
     "net7.0": []
   },
   "packageFolders": {
-    "/Users/kimtaekhyun/.nuget/packages/": {}
+    "C:\\Users\\kth\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/kimtaekhyun/Projects/TextGame/TextGame/TextGame.csproj",
+      "projectUniqueName": "D:\\TextGame\\textgame\\TextGame\\TextGame.csproj",
       "projectName": "TextGame",
-      "projectPath": "/Users/kimtaekhyun/Projects/TextGame/TextGame/TextGame.csproj",
-      "packagesPath": "/Users/kimtaekhyun/.nuget/packages/",
-      "outputPath": "/Users/kimtaekhyun/Projects/TextGame/TextGame/obj/",
+      "projectPath": "D:\\TextGame\\textgame\\TextGame\\TextGame.csproj",
+      "packagesPath": "C:\\Users\\kth\\.nuget\\packages\\",
+      "outputPath": "D:\\TextGame\\textgame\\TextGame\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/kimtaekhyun/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\kth\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -59,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
       }
     }
   }
