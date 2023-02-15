@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using static System.Net.Mime.MediaTypeNames;
 using System.Net.Http.Headers;
+using System.Xml.Linq;
 
 namespace TextGame
 {
@@ -61,23 +62,15 @@ namespace TextGame
 
         public void MoveRight(string[,] playGround)
         {
-            if (playGround.GetLength(1) - 2 > this.x)
-            {
-                string temp = playGround[this.y, this.x];
-                playGround[this.y, this.x] = "  ";
-                playGround[this.y, this.x + 1] = temp;
-                //this.x++;
-            }
+            string temp = playGround[this.y, this.x];
+            playGround[this.y, this.x] = "  ";
+            playGround[this.y, this.x + 1] = temp;
         }
         public void MoveLeft(string[,] playGround)
         {
-            if (this.x > 1)
-            {
-                string temp = playGround[this.y, this.x];
-                playGround[this.y, this.x] = "  ";
-                playGround[this.y, this.x - 1] = temp;
-                //this.x--;
-            }
+            string temp = playGround[this.y, this.x];
+            playGround[this.y, this.x] = "  ";
+            playGround[this.y, this.x - 1] = temp;
         }
     }
     class Program
@@ -113,7 +106,6 @@ namespace TextGame
         public static string[,] playGround = new string[row, column];
         public static void IntToString(int[,] arr)
         {
-
             //배열 안의 값이 정수니까 문자열로 바꿔주는 반복문.
             for (int i = 0; i < arr.GetLength(0); i++)
             {
@@ -122,6 +114,17 @@ namespace TextGame
                     playGround[i, j] = arr[i, j].ToString();
                 }
             }
+        }
+        public static string[,] IntToString(int[,] arr, string[,] strArr)
+        {
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                for (int j = 0; j < arr.GetLength(1); j++)
+                {
+                    strArr[i, j] = arr[i, j].ToString();
+                }
+            }
+            return strArr;
         }
 
         public static string[] arrText = new string[] {"", "a ", "b ", "c ", "d ", "e ", "f ", "g ", "h ", "i ", "j ", "k ", "l ", "m ", "n ", "o ", "p ",
@@ -144,88 +147,112 @@ namespace TextGame
 
 
         public static int fps = 0;
-        public static void OnTimedEvent()
+        public static async Task OnTimedEvent()
         {
-            while (true) {
-                
-                //플레이 그라운드 초기화 클래스.
-                Initialize init = new Initialize();
-                init.InitializePlayGround(playGround);
-
-                Console.SetCursorPosition(0, 0);
-                Console.CursorVisible = false;
-            }
-        }
-
-        //텍스트들을 아래로 움직인다
-        public static void MoveDown()
-        {
-            int lastLine = playGround.GetLength(0) - 2;
-            while (true)
+            await Task.Run(() =>
             {
-                for (int i = playGround.GetLength(0) - 3; i >= 1; i--)
+                while (true && !cancellationTokenSource.IsCancellationRequested)
                 {
-                    if(i + 1 == lastLine)
+                    //플레이 그라운드 초기화 클래스.
+                    Initialize init = new Initialize();
+                    init.InitializePlayGround(playGround);
+
+                    Console.SetCursorPosition(0, 0);
+                    Console.CursorVisible = false;
+                }
+            });
+        }
+        public static void EndGame()
+        {
+            string[,] endGround = (string[,])playGround.Clone();
+            int[,] sample = (int[,])intArr.Clone();
+            IntToString(sample, endGround);
+
+            string texts = "Game Over";
+            for (int j = 0; j < texts.Length; j++)
+            {
+                endGround[4, j + 4] = texts[j].ToString() + " ";
+            }
+            Initialize init = new Initialize();
+            init.InitializePlayGround(endGround);
+        }
+        //텍스트들을 아래로 움직인다
+        public static async Task MoveDown()
+        {
+            await Task.Run(() =>
+            {
+                int lastLine = playGround.GetLength(0) - 2;
+                while (true && !cancellationTokenSource.IsCancellationRequested)
+                {
+                    for (int i = playGround.GetLength(0) - 3; i >= 1; i--)
                     {
+                        if (i + 1 == lastLine)
+                        {
+                            for (int j = 1; j < playGround.GetLength(1) - 2; j++)
+                            {
+                                //regex
+                                Match m = Regex.Match(playGround[lastLine, j], "[a-z]");
+                                if (m.Success)
+                                {
+                                    Debug.WriteLine("cht.Y{0} lastLine {1} cht.X {2} j {3}", cht.Y, lastLine, cht.X, j);
+                                    if (lastLine == cht.Y && j == cht.X)
+                                    {
+                                        //gameEnd();
+                                        playGround[playGround.GetLength(0) - 2, j] = "  ";
+                                        Debug.WriteLine("GameEnd!");
+                                        cancellationTokenSource.Cancel();
+                                    }
+                                    playGround[playGround.GetLength(0) - 2, j] = "  ";
+                                }
+                            }
+                        }
+
+
                         for (int j = 1; j < playGround.GetLength(1) - 2; j++)
                         {
-                            //regex
-                            Match m = Regex.Match(playGround[lastLine, j], "[a-z]");
-                            if (m.Success)
+                            if (playGround[i, j] != "□" && playGround[i, j] != "  " && playGround[i, j] != "♨")
                             {
-                                Debug.WriteLine("cht.Y{0} lastLine {1} cht.X {2} j {3}", cht.Y, lastLine, cht.X, j);
-                                if(lastLine == cht.Y && j == cht.X)
-                                {
-                                    //gameEnd();
-                                    playGround[playGround.GetLength(0) - 2, j] = "  ";
-                                    Debug.WriteLine("GameEnd!");
-                                    Console.Beep();
-                                    break;
-                                }
-                                playGround[playGround.GetLength(0) - 2, j] = "  ";
-                                
+                                //이전 텍스트들을 없앰
+                                string temp = playGround[i, j];
+                                playGround[i, j] = "  ";
+                                //이전텍스들의 y를 하나 올림
+                                playGround[i + 1, j] = temp;
+                                Thread.Sleep(1);
                             }
                         }
                     }
-
-
-                    for (int j = 1; j < playGround.GetLength(1) - 2; j++)
-                    {
-                        if (playGround[i, j] != "□" && playGround[i, j] != "  " && playGround[i,j] != "♨")
-                        {
-                            //이전 텍스트들을 없앰
-                            string temp = playGround[i, j];
-                            playGround[i, j] = "  ";
-                            //이전텍스들의 y를 하나 올림
-                            playGround[i + 1, j] = temp;
-                            Thread.Sleep(1);
-                        }
+                    SetRandom();
+                    if (cancellationTokenSource.IsCancellationRequested) { 
+                        Console.Clear();
+                        EndGame();
                     }
                 }
-                SetRandom();
-            }
+            });
             //위에서부터 아래가 아닌 아래에서부터 위로 올라가는 방식으로.,
         }
 
         //public static Character cht = new Character();
 
         public static ConsoleKeyInfo c;
-        public static void Input()
+        public static async Task Input()
         {
-            while (true)
+            await Task.Run(() =>
             {
-                c = Console.ReadKey(true);
-                if(c.Key == ConsoleKey.RightArrow)
+                while (true && !cancellationTokenSource.IsCancellationRequested)
                 {
-                    cht.MoveRight(playGround);
-                    cht.X = cht.X + 1;
+                    c = Console.ReadKey(true);
+                    if (c.Key == ConsoleKey.RightArrow && playGround.GetLength(1) - 2 > cht.X)
+                    {
+                        cht.MoveRight(playGround);
+                        cht.X = cht.X + 1;
+                    }
+                    else if (c.Key == ConsoleKey.LeftArrow && cht.X > 1)
+                    {
+                        cht.MoveLeft(playGround);
+                        cht.X = cht.X - 1;
+                    }
                 }
-                else if(c.Key == ConsoleKey.LeftArrow)
-                {
-                    cht.MoveLeft(playGround);
-                    cht.X = cht.X - 1;
-                }
-            }
+            });
         }
         public static void StartGame()
         {
@@ -293,34 +320,18 @@ namespace TextGame
                 }
             }
         }
-        public void EndGame()
-        {
-            string[,] endGround = (string[,])playGround.Clone();
-            workPlayGround.Dispose();
-            workInput.Dispose();
-            workMoveDown.Dispose();
-        }
-        public static Task workPlayGround = new Task(new Action(OnTimedEvent));
-        public static Task workInput = new Task(new Action(Input));
-        public static Task workMoveDown = new Task(new Action(MoveDown));
+        public static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         static void Main(string[] args)
         {
             IntToString(intArr);
-
             StartGame();
-
             SetRandom();
             SetCharacter();
 
-            //플레이 그라운드에서의 텍스트 랜덤 위치를 뽑아내는 클래스.
-            workPlayGround.Start();
-            workInput.Start();
-            workMoveDown.Start();
-
-
-            workMoveDown.Wait();
-            workInput.Wait();
-            workPlayGround.Wait();
+                var workPlayGround = OnTimedEvent();
+                var workMoveDown = MoveDown();
+                var workInput = Input();
+                Task.WaitAll(workMoveDown, workInput, workPlayGround);
         }
     }
 }
