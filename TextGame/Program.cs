@@ -11,15 +11,16 @@ using System.Security.Cryptography.X509Certificates;
 using static System.Net.Mime.MediaTypeNames;
 using System.Net.Http.Headers;
 using System.Xml.Linq;
+using System.Runtime;
 
 namespace TextGame
 {
     class RandomPlace
     {
-        public int Randomer(int min, int max)
+        public byte Randomer(byte min, byte max)
         {
             Random rd = new Random();
-            return rd.Next(min, max);
+            return Convert.ToByte(rd.Next(min, max));
         }
     }
 
@@ -27,9 +28,9 @@ namespace TextGame
     {
         public void InitializePlayGround(string[,] playGround)
         {
-            for (int i = 0; i < playGround.GetLength(0); i++)
+            for (byte i = 0; i < playGround.GetLength(0); i++)
             {
-                for (int j = 0; j < playGround.GetLength(1); j++)
+                for (byte j = 0; j < playGround.GetLength(1); j++)
                 {
                     if (playGround[i, j] == "0")
                     {
@@ -49,6 +50,8 @@ namespace TextGame
     {
         private int x = 4;
         private int y = 20;
+        private String temp;
+
         public int X
         {
             get { return this.x; }
@@ -62,13 +65,13 @@ namespace TextGame
 
         public void MoveRight(string[,] playGround)
         {
-            string temp = playGround[this.y, this.x];
+            temp = playGround[this.y, this.x];
             playGround[this.y, this.x] = "  ";
             playGround[this.y, this.x + 1] = temp;
         }
         public void MoveLeft(string[,] playGround)
         {
-            string temp = playGround[this.y, this.x];
+            temp = playGround[this.y, this.x];
             playGround[this.y, this.x] = "  ";
             playGround[this.y, this.x - 1] = temp;
         }
@@ -100,6 +103,8 @@ namespace TextGame
             {2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
             {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
         };
+
+        public static Initialize init = new Initialize();
 
         public static int row = 22;
         public static int column = 28;
@@ -134,7 +139,7 @@ namespace TextGame
         public static void SetRandom()
         {
             RandomPlace rp = new RandomPlace();
-            int arr = rp.Randomer(1, playGround.GetLength(1) - 1);
+            byte arr = rp.Randomer(1, Convert.ToByte(playGround.GetLength(1) - 1));
             
             playGround[1, arr] = arrText[arr];
         }
@@ -145,8 +150,6 @@ namespace TextGame
             playGround[cht.Y, cht.X] = "♨";
         }
 
-
-        public static int fps = 0;
         public static async Task OnTimedEvent()
         {
             await Task.Run(() =>
@@ -154,7 +157,6 @@ namespace TextGame
                 while (true && !cancellationTokenSource.IsCancellationRequested)
                 {
                     //플레이 그라운드 초기화 클래스.
-                    Initialize init = new Initialize();
                     init.InitializePlayGround(playGround);
 
                     Console.SetCursorPosition(0, 0);
@@ -173,12 +175,13 @@ namespace TextGame
             {
                 endGround[4, j + 4] = texts[j].ToString() + " ";
             }
-            Initialize init = new Initialize();
             init.InitializePlayGround(endGround);
         }
         //텍스트들을 아래로 움직인다
+        public static Stopwatch stopwatch = new Stopwatch();
         public static async Task MoveDown()
         {
+            stopwatch.Start();
             await Task.Run(() =>
             {
                 int lastLine = playGround.GetLength(0) - 2;
@@ -198,8 +201,11 @@ namespace TextGame
                                     if (lastLine == cht.Y && j == cht.X)
                                     {
                                         //gameEnd();
+                                        stopwatch.Stop();
+                                        TimeSpan ts = stopwatch.Elapsed;
+
                                         playGround[playGround.GetLength(0) - 2, j] = "  ";
-                                        Debug.WriteLine("GameEnd!");
+                                        Debug.WriteLine($"GameEnd! Your Time => {ts.Hours} : {ts.Minutes} : {ts.Seconds}");
                                         cancellationTokenSource.Cancel();
                                     }
                                     playGround[playGround.GetLength(0) - 2, j] = "  ";
@@ -231,8 +237,6 @@ namespace TextGame
             //위에서부터 아래가 아닌 아래에서부터 위로 올라가는 방식으로.,
         }
 
-        //public static Character cht = new Character();
-
         public static ConsoleKeyInfo c;
         public static async Task Input()
         {
@@ -254,7 +258,7 @@ namespace TextGame
                 }
             });
         }
-        public static void StartGame()
+        public static void StartGame() //시작하기 전에 아이디 입력 기능 구현..----------------------------------------------------
         {
             //게임시작
 
@@ -282,7 +286,6 @@ namespace TextGame
                 startGround[9, j + 4] = text3[j].ToString() + " ";
             }
             
-            Initialize init = new Initialize();
             init.InitializePlayGround(startGround);
 
             int startY = 7;
@@ -320,6 +323,7 @@ namespace TextGame
                 }
             }
         }
+        
         public static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         static void Main(string[] args)
         {
@@ -328,10 +332,10 @@ namespace TextGame
             SetRandom();
             SetCharacter();
 
-                var workPlayGround = OnTimedEvent();
-                var workMoveDown = MoveDown();
-                var workInput = Input();
-                Task.WaitAll(workMoveDown, workInput, workPlayGround);
+            var workPlayGround = OnTimedEvent();
+            var workMoveDown = MoveDown();
+            var workInput = Input();
+            Task.WaitAll(workMoveDown, workInput, workPlayGround);
         }
     }
 }
