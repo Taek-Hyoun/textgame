@@ -173,9 +173,81 @@ namespace TextGame
             string texts = "Game Over";
             for (int j = 0; j < texts.Length; j++)
             {
-                endGround[4, j + 4] = texts[j].ToString() + " ";
+                endGround[4, j + 10] = texts[j].ToString() + " ";
+            }
+            String wdrk = "World Rank";
+            for (int j = 0; j < wdrk.Length; j++)
+            {
+                endGround[7, j + 7] = wdrk[j].ToString() + " ";
+            }
+            //get first - third place from DB
+            String firstPlace = "1st > 00:01:00";
+            String secondPlace = "2st > 00:00:50";
+            String thirdPlace = "3th > 00:00:43";
+
+            for(int j = 0; j < firstPlace.Length; j++)
+            {
+                endGround[9, j + 7] = firstPlace[j].ToString() + " ";
+            }
+            for (int j = 0; j < secondPlace.Length; j++)
+            {
+                endGround[11, j + 7] = secondPlace[j].ToString() + " ";
+            }
+            for (int j = 0; j < thirdPlace.Length; j++)
+            {
+                endGround[13, j + 7] = thirdPlace[j].ToString() + " ";
+            }
+
+            String saveMyRank = "upload rank";
+            String exitGame = "exit game";
+
+            for (int j = 0; j < saveMyRank.Length; j++)
+            {
+                endGround[15, j + 7] = saveMyRank[j].ToString() + " ";
+            }
+            for (int j = 0; j < exitGame.Length; j++)
+            {
+                endGround[16, j + 7] = exitGame[j].ToString() + " ";
             }
             init.InitializePlayGround(endGround);
+
+            Int32 startY = 15;
+            Console.SetCursorPosition(7, startY);
+            Console.CursorVisible = true;
+
+            while (true)
+            {
+                c = Console.ReadKey(true);
+                if (c.Key == ConsoleKey.DownArrow && startY < 16)
+                {
+                    ++startY;
+                    Console.SetCursorPosition(12, startY);
+                }
+                if (c.Key == ConsoleKey.UpArrow && startY > 15)
+                {
+                    --startY;
+                    Console.SetCursorPosition(12, startY);
+                }
+                if (c.Key == ConsoleKey.Enter)
+                {
+                    if (startY == 15) // save my rank
+                    {
+                        Console.Clear();
+                        Console.ReadLine();
+                        //connect to db
+                        break;
+                    }
+                    else if (startY == 16) //exit
+                    {
+                        Console.Clear();
+                        Environment.Exit(0);
+                    }
+                    else if (startY == 9)
+                    {
+
+                    }
+                }
+            }
         }
         //텍스트들을 아래로 움직인다
         public static Stopwatch stopwatch = new Stopwatch();
@@ -258,7 +330,7 @@ namespace TextGame
                 }
             });
         }
-        public static void StartGame() //시작하기 전에 아이디 입력 기능 구현..----------------------------------------------------
+        public static void StartGame()
         {
             //게임시작
 
