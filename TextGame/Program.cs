@@ -12,10 +12,11 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Net.Http.Headers;
 using System.Xml.Linq;
 using System.Runtime;
+using DB;
 
 namespace TextGame
 {
-    class RandomPlace
+    public class RandomPlace
     {
         public byte Randomer(byte min, byte max)
         {
@@ -399,15 +400,18 @@ namespace TextGame
         public static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         static void Main(string[] args)
         {
-            IntToString(intArr);
-            StartGame();
-            SetRandom();
-            SetCharacter();
+            //IntToString(intArr);
+            //StartGame();
+            //SetRandom();
+            //SetCharacter();
 
-            var workPlayGround = OnTimedEvent();
-            var workMoveDown = MoveDown();
-            var workInput = Input();
-            Task.WaitAll(workMoveDown, workInput, workPlayGround);
+            //var workPlayGround = OnTimedEvent();
+            //var workMoveDown = MoveDown();
+            //var workInput = Input();
+            //Task.WaitAll(workMoveDown, workInput, workPlayGround);
+
+            Select s = new Select();
+            Console.WriteLine(s.SelectWorld());
         }
     }
 }
