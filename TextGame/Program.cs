@@ -165,7 +165,7 @@ namespace TextGame
                 }
             });
         }
-        public static void EndGame()
+        public static void EndGame(String time)
         {
             string[,] endGround = (string[,])playGround.Clone();
             int[,] sample = (int[,])intArr.Clone();
@@ -182,21 +182,23 @@ namespace TextGame
                 endGround[7, j + 7] = wdrk[j].ToString() + " ";
             }
             //get first - third place from DB
-            String firstPlace = "1st > 00:01:00";
-            String secondPlace = "2st > 00:00:50";
-            String thirdPlace = "3th > 00:00:43";
+            Select s = new Select();
+            
+            String firstPlace = s.SelectWorld(0, 1);
+            String secondPlace = s.SelectWorld(1, 1);
+            String thirdPlace = s.SelectWorld(2, 1);
 
-            for(int j = 0; j < firstPlace.Length; j++)
+            for (int j = 0; j < firstPlace.Length; j++)
             {
-                endGround[9, j + 7] = firstPlace[j].ToString() + " ";
+                endGround[9, j + 4] = firstPlace[j].ToString() + " ";
             }
             for (int j = 0; j < secondPlace.Length; j++)
             {
-                endGround[11, j + 7] = secondPlace[j].ToString() + " ";
+                endGround[11, j + 4] = secondPlace[j].ToString() + " ";
             }
             for (int j = 0; j < thirdPlace.Length; j++)
             {
-                endGround[13, j + 7] = thirdPlace[j].ToString() + " ";
+                endGround[13, j + 4] = thirdPlace[j].ToString() + " ";
             }
 
             String saveMyRank = "upload rank";
@@ -234,11 +236,14 @@ namespace TextGame
                     if (startY == 15) // save my rank
                     {
                         Console.Clear();
-                        Console.ReadLine();
-                        //connect to db
+                        String name = Console.ReadLine();
+                        //connect to db===========================================================================
+                        Debug.WriteLine(name, time);
+                        Insert ist = new Insert();
+                        ist.InsertRank(name, time);
                         break;
                     }
-                    else if (startY == 16) //exit
+                    else if (startY ==  16) //exit
                     {
                         Console.Clear();
                         Environment.Exit(0);
@@ -254,10 +259,12 @@ namespace TextGame
         public static Stopwatch stopwatch = new Stopwatch();
         public static async Task MoveDown()
         {
+            
             stopwatch.Start();
             await Task.Run(() =>
             {
                 int lastLine = playGround.GetLength(0) - 2;
+                String time = "";
                 while (true && !cancellationTokenSource.IsCancellationRequested)
                 {
                     for (int i = playGround.GetLength(0) - 3; i >= 1; i--)
@@ -275,10 +282,11 @@ namespace TextGame
                                     {
                                         //gameEnd();
                                         stopwatch.Stop();
-                                        TimeSpan ts = stopwatch.Elapsed;
 
                                         playGround[playGround.GetLength(0) - 2, j] = "  ";
-                                        Debug.WriteLine($"GameEnd! Your Time => {ts.Hours} : {ts.Minutes} : {ts.Seconds}");
+                                        Debug.WriteLine($"GameEnd! Your Time => {stopwatch.Elapsed}");
+                                        time = stopwatch.Elapsed.ToString();
+
                                         cancellationTokenSource.Cancel();
                                     }
                                     playGround[playGround.GetLength(0) - 2, j] = "  ";
@@ -303,7 +311,7 @@ namespace TextGame
                     SetRandom();
                     if (cancellationTokenSource.IsCancellationRequested) { 
                         Console.Clear();
-                        EndGame();
+                        EndGame(time);
                     }
                 }
             });
@@ -400,18 +408,15 @@ namespace TextGame
         public static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         static void Main(string[] args)
         {
-            //IntToString(intArr);
-            //StartGame();
-            //SetRandom();
-            //SetCharacter();
+            IntToString(intArr);
+            StartGame();
+            SetRandom();
+            SetCharacter();
 
-            //var workPlayGround = OnTimedEvent();
-            //var workMoveDown = MoveDown();
-            //var workInput = Input();
-            //Task.WaitAll(workMoveDown, workInput, workPlayGround);
-
-            Select s = new Select();
-            Console.WriteLine(s.SelectWorld());
+            var workPlayGround = OnTimedEvent();
+            var workMoveDown = MoveDown();
+            var workInput = Input();
+            Task.WaitAll(workMoveDown, workInput, workPlayGround);
         }
     }
 }
