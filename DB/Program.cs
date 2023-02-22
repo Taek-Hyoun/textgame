@@ -33,14 +33,19 @@ namespace DB
             cmd.ExecuteNonQuery(); //
             MySqlDataReader rdr = cmd.ExecuteReader();
 
-            String str = null;
+            String strName = null;
+            String strTime = null;
             while (rdr.Read())
             {
-                str = (String)rdr["userName"];
-                str = (String)rdr["surviveTime"];
+                String temp = (String)rdr["userName"];
+                if (temp.Length < 10)
+                {
+                    strName += temp.PadRight(10, ' ');
+                }
+                strTime += (String)rdr["surviveTime"];
             }
             conn.Close();
-            return str;
+            return strName + strTime.Substring(0, 8);
             //객체 만들어서 리턴하기
         }
     }
