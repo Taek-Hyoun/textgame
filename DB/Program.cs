@@ -38,9 +38,9 @@ namespace DB
             while (rdr.Read())
             {
                 String temp = (String)rdr["userName"];
-                if (temp.Length < 10)
+                if (temp.Length < 11)
                 {
-                    strName += temp.PadRight(10, ' ');
+                    strName += temp.PadRight(11, ' ');
                 }
                 strTime += (String)rdr["surviveTime"];
             }
