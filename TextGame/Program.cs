@@ -18,10 +18,16 @@ namespace TextGame
 {
     public class RandomPlace
     {
-        public byte Randomer(byte min, byte max)
+        private Random rd = new Random();
+        public char Randomer()
         {
-            Random rd = new Random();
-            return Convert.ToByte(rd.Next(min, max));
+            char randomChar = Convert.ToChar(rd.Next(97, 123));
+            return randomChar;
+        }
+        public int Randomer(int min, int max)
+        {
+            int r = rd.Next(min, max);
+            return r;
         }
     }
 
@@ -133,16 +139,13 @@ namespace TextGame
             return strArr;
         }
 
-        public static string[] arrText = new string[] {"", "a ", "b ", "c ", "d ", "e ", "f ", "g ", "h ", "i ", "j ", "k ", "l ", "m ", "n ", "o ", "p ",
-                                             "q ", "r ", "s ", "t ", "u ", "v ", "w ", "x ", "y ", "z "};
-
         public int[] previusArr = new int[3];
         public static void SetRandom()
         {
             RandomPlace rp = new RandomPlace();
-            byte arr = rp.Randomer(1, Convert.ToByte(playGround.GetLength(1) - 1));
-            
-            playGround[1, arr] = arrText[arr];
+            char arr = rp.Randomer();
+            int rndPose = rp.Randomer(1, 26);
+            playGround[1, rndPose] = arr + " ";
         }
 
         public static Character cht = new Character();
@@ -237,8 +240,6 @@ namespace TextGame
                     {
                         Console.Clear();
                         String name = Console.ReadLine();
-                        //connect to db===========================================================================
-                        Debug.WriteLine(name, time);
                         Insert ist = new Insert();
                         ist.InsertRank(name, time);
                         break;
@@ -250,7 +251,7 @@ namespace TextGame
                     }
                     else if (startY == 9)
                     {
-
+                        //settting
                     }
                 }
             }
@@ -284,7 +285,6 @@ namespace TextGame
                                         stopwatch.Stop();
 
                                         playGround[playGround.GetLength(0) - 2, j] = "  ";
-                                        Debug.WriteLine($"GameEnd! Your Time => {stopwatch.Elapsed}");
                                         time = stopwatch.Elapsed.ToString();
 
                                         cancellationTokenSource.Cancel();
